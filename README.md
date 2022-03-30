@@ -1,5 +1,7 @@
-# MediaPipe Unity Plugin
+# MediaPipe Unity Plugin (non official)
 This is a Unity (2020.3.8f1) Plugin to use MediaPipe (0.8.3.1).
+
+Note: this is the older version of Official MediapipeUnityPlugin and not recommended to use in production.
 
 ## Prerequisites
 To use this plugin, you need to build native libraries for the target platforms (Desktop/UnityEditor, Android, iOS).
