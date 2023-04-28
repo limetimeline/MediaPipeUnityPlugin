@@ -24,7 +24,10 @@ public class SceneDirector : MonoBehaviour {
   static IntPtr currentContext = IntPtr.Zero;
 
   const int MAX_WAIT_FRAME = 1000;
-
+  
+  public GameObject Left;
+  public GameObject Right;
+ 
   void OnEnable() {
     // for debugging
     // System.Environment.SetEnvironmentVariable("GLOG_v", "2");
@@ -224,4 +227,95 @@ public class SceneDirector : MonoBehaviour {
     return useGPU;
 #endif
   }
+  
+  static List<NormalizedLandmarkList> landmarkList;
+    static List<ClassificationList> handnesses;
+    protected Vector3 ScaleVector(Transform transform)
+    {
+        return new Vector3(10 * transform.localScale.x, 10 * transform.localScale.z, 1);
+    }
+
+    protected Vector3 GetPositionFromNormalizePoint(Transform screenTransform, float x, float y, bool isFlipped)
+    {
+        var relX = (isFlipped ? -1 : 1) * (x - 0.5f);
+        var relY = 0.5f - y;
+
+        return Vector3.Scale(new Vector3(relX, relY, 0), ScaleVector(screenTransform)) + screenTransform.position;
+    }
+
+    public static void outputCallback(List<NormalizedLandmarkList> landmark, List<ClassificationList> handness)
+    {
+        landmarkList = landmark;
+        handnesses = handness;
+    }
+
+    private void Update()
+    {
+
+       
+
+        if (landmarkList != null && landmarkList.Count > 0)
+        {
+            NormalizedLandmarkList hand = landmarkList[0];
+            Debug.Log(handnesses[0].Classification[0].Label);
+
+            if (handnesses[0].Classification[0].Label == "Left" && handnesses[0].Classification[0].Label == "Right")
+            {
+                Right.SetActive(true);
+                Left.SetActive(true);
+            }
+            else if (handnesses[0].Classification[0].Label == "Left" && handnesses[0].Classification[0].Label != "Right")
+            {
+                Right.SetActive(false);
+                Left.SetActive(true);
+            }
+            else if (handnesses[0].Classification[0].Label != "Left" && handnesses[0].Classification[0].Label == "Right")
+            {
+                Right.SetActive(true);
+                Left.SetActive(false);
+            }
+            else
+            {
+                Right.SetActive(false);
+                Left.SetActive(false);
+            }
+
+
+            /*            for (int i = 0; i < handnesses.Count; i++)
+                        {
+                            Debug.Log(handnesses[i]);
+                        }*/
+
+            if (hand.Landmark.Count >= 20)
+            {
+/*                Vector3 midPoint = GetPositionFromNormalizePoint(webCamScreen.transform, hand.Landmark[11].X, hand.Landmark[11].Y, true);
+                Vector3 wristPoint = GetPositionFromNormalizePoint(webCamScreen.transform, hand.Landmark[0].X, hand.Landmark[0].Y, true);
+
+                float yDiff = midPoint.y - wristPoint.y;
+                float xDiff = midPoint.x - wristPoint.x;
+
+                float angle = (float)(Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI);
+                Vector3 angle2 = new Vector3(0, 0, angle);
+                Vector3 newPosition = wristPoint;*/
+
+/*                if (handnesses[0].Classification[0].Label == "Left")
+                {
+*//*                    Left.transform.eulerAngles = angle2;
+                    Left.transform.position = newPosition;*//*
+                }
+                else if(handnesses[0].Classification[0].Label == "Right")
+                {
+*//*                    Right.transform.eulerAngles = angle2;
+                    Right.transform.position = newPosition;*//*
+                }*/
+                
+
+            }
+        }
+        else
+        {
+            Right.SetActive(false);
+            Left.SetActive(false);
+        }
+    }
 }
