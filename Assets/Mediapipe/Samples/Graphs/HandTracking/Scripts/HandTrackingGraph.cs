@@ -27,6 +27,7 @@ public class HandTrackingGraph : DemoGraph {
   private BoolPacket palmDetectionsPresencePacket;
 
   private SidePacket sidePacket;
+  private HandTrackingValue handValue;
 
   public override Status StartRun() {
     handLandmarksStreamPoller = graph.AddOutputStreamPoller<List<NormalizedLandmarkList>>(handLandmarksStream).Value();
@@ -55,7 +56,10 @@ public class HandTrackingGraph : DemoGraph {
 
   public override void RenderOutput(WebCamScreenController screenController, TextureFrame textureFrame) {
     var handTrackingValue = FetchNextHandTrackingValue();
-    RenderAnnotation(screenController, handTrackingValue);
+    RenderAnnotation(screenController, handTrackingValue); // 손 그리기
+    
+    handValue = handTrackingValue;
+    SceneDirector.outputCallback(handValue.HandLandmarkLists, handValue.Handednesses);
 
     screenController.DrawScreen(textureFrame);
   }
